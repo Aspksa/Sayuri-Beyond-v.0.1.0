@@ -1,0 +1,6 @@
+{
+  "ignorePatterns": ["public/mockServiceWorker.js", "src/routeTree.gen.ts"],
+  "rules": {
+    "no-console": ["warn", { "allow": ["warn", "error"] }]
+  }
+}
