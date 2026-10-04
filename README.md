@@ -40,7 +40,14 @@ Current focus:
 - design system;
 - chat interface foundation.
 
-Avatar, Live2D, voice, memory and AI-agent features are planned for later stages.
+The first cognitive backend is now present at `backend/sayuri-core`.
+
+Current AI foundation:
+- EvoAgentX 0.1.4 — supervised workflow evolution and evaluation;
+- OpenCog Hyperon 0.2.10 / MeTTa — symbolic logic;
+- FastAPI bridge for the frontend.
+
+Avatar, Live2D, voice, long-term memory and the production LLM provider are added in later stages.
 
 ## Third-party foundation
 
