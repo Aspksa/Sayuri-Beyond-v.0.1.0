@@ -1,0 +1,236 @@
+{
+  "global": {
+    "copyright": "版权©2025 Shadcn Admin。保留所有权利。"
+  },
+  "customConfig": {
+    "title": "偏好设置",
+    "titleDesc": "仅在开发模式下生效，不影响生产环境构建。",
+    "themeMode": {
+      "label": "外观模式",
+      "light": "浅色",
+      "dark": "深色",
+      "system": "跟随系统"
+    },
+    "color": "主题色",
+    "colors": {
+      "zinc": "锌灰",
+      "blue": "蓝色",
+      "green": "绿色",
+      "orange": "橙色",
+      "rose": "玫红",
+      "violet": "紫色"
+    },
+    "radius": "圆角",
+    "grayscale": "灰色模式",
+    "other": "其它",
+    "siderMenuType": {
+      "label": "侧边栏样式",
+      "sub": "子菜单",
+      "group": "菜单分组"
+    },
+    "layoutMode": {
+      "label": "布局模式",
+      "side": "左右布局",
+      "top": "顶部布局",
+      "mix": "混合布局",
+      "column": "分栏布局"
+    },
+    "autoSplitMenu": "自动分割菜单",
+    "tabs": {
+      "label": "页面标签",
+      "showTabs": "显示标签栏",
+      "homePinned": "固定首页标签",
+      "homePinnedDesc": "首页标签不可关闭",
+      "showIcon": "显示标签图标",
+      "keepAlive": "持久化页面",
+      "keepAliveDesc": "切换标签时保留页面状态与滚动位置",
+      "style": "标签风格",
+      "styleCard": "卡片",
+      "styleSmooth": "圆滑",
+      "styleDynamic": "灵动",
+      "maximize": "最大化",
+      "restore": "还原",
+      "contextMenu": {
+        "refresh": "刷新",
+        "close": "关闭",
+        "closeLeft": "关闭左侧",
+        "closeRight": "关闭右侧",
+        "closeOther": "关闭其他",
+        "closeAll": "关闭全部"
+      }
+    },
+    "settingTab": {
+      "general": "通用",
+      "appearance": "外观",
+      "layout": "布局"
+    },
+    "animation": {
+      "label": "动画",
+      "navigationProgress": "页面切换进度条",
+      "pageTransition": "页面切换动画",
+      "pageTransitionType": {
+        "fade": "渐变",
+        "slideUp": "上滑",
+        "slideRight": "右推",
+        "zoom": "缩放"
+      },
+      "routeLoading": "路由加载骨架屏",
+      "routeLoadingDesc": "进入页面前预加载数据，并显示骨架屏占位"
+    },
+    "language": "语言",
+    "copySettings": "复制配置",
+    "copySuccess": "拷贝成功",
+    "copySuccessDesc": "请修改 src/preferences.ts 中的 preferences 对象"
+  },
+  "auth": {
+    "login": {
+      "header": {
+        "title": "Shadcn Admin",
+        "description": "输入您的账号信息以登录"
+      },
+      "form": {
+        "email": "邮箱",
+        "email_placeholder": "请输入邮箱",
+        "password": "密码",
+        "password_placeholder": "请输入密码",
+        "submit": "登录"
+      },
+      "third_party": {
+        "description": "使用以下服务登录",
+        "github": "GitHub",
+        "google": "谷歌"
+      },
+      "footer": {
+        "description": "继续登录即表示您同意我们的 <0>{{service}}</0> 和 <1>{{privacy}}</1>",
+        "service_text": "服务条款",
+        "service_link": "#",
+        "privacy_text": "隐私政策",
+        "privacy_link": "#"
+      },
+      "error_default": "登录失败",
+      "error_invalid_credentials": "邮箱或密码错误",
+      "success": "登录成功"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "开箱即用的后台管理模板",
+      "title": "现代化的管理后台，快速启动你的项目",
+      "description": "基于 React 19、TanStack Router、shadcn/ui 构建，集成认证、国际化、主题切换，开发者友好。",
+      "cta_primary": "进入控制台",
+      "cta_secondary": "立即登录"
+    },
+    "features": {
+      "title": "核心功能",
+      "subtitle": "一切你所需要的，开箱即用",
+      "dashboard": {
+        "title": "仪表盘",
+        "desc": "直观的数据可视化，一眼掌握业务全局。"
+      },
+      "auth": {
+        "title": "权限认证",
+        "desc": "内置登录、Token 刷新、路由守卫，安全可靠。"
+      },
+      "analytics": {
+        "title": "数据分析",
+        "desc": "多维度报表与图表，深度洞察业务数据。"
+      },
+      "ai": {
+        "title": "AI 集成",
+        "desc": "预留 AI 模块接入点，轻松扩展智能功能。"
+      },
+      "config": {
+        "title": "灵活配置",
+        "desc": "主题、语言、布局均可自定义，满足多样需求。"
+      },
+      "performance": {
+        "title": "极速体验",
+        "desc": "Vite 构建，路由懒加载，首屏秒开。"
+      }
+    }
+  },
+  "setting": {
+    "users": {
+      "title": "用户管理",
+      "total": "共 {{count}} 位用户",
+      "col": {
+        "id": "ID",
+        "nick_name": "昵称",
+        "user_name": "用户名",
+        "email": "邮箱",
+        "status": "状态",
+        "last_login": "最后登录",
+        "actions": "操作"
+      },
+      "status": {
+        "enabled": "启用",
+        "disabled": "禁用"
+      },
+      "pagination": {
+        "page": "第 {{page}} / {{total}} 页",
+        "prev": "上一页",
+        "next": "下一页"
+      },
+      "edit": {
+        "title": "编辑用户",
+        "user_name": "用户名",
+        "email": "邮箱",
+        "nick_name": "昵称",
+        "status": "状态",
+        "cancel": "取消",
+        "save": "保存",
+        "saving": "保存中..."
+      },
+      "delete": {
+        "title": "确认删除",
+        "description": "删除后无法恢复，确定要删除该用户吗？",
+        "cancel": "取消",
+        "confirm": "删除"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "仪表盘",
+    "subtitle": "欢迎回来，查看系统概览",
+    "stats": {
+      "users": "用户总数",
+      "roles": "角色总数",
+      "permissions": "权限总数",
+      "menus": "菜单总数",
+      "trend": "较上月增长"
+    },
+    "recentUsers": {
+      "title": "近期用户",
+      "description": "最近登录的 5 位用户",
+      "col": {
+        "nick_name": "昵称",
+        "email": "邮箱",
+        "status": "状态",
+        "last_login": "最后登录"
+      }
+    }
+  },
+  "notFound": {
+    "title": "页面不存在",
+    "description": "你访问的页面不存在或已被移除。",
+    "back": "返回首页"
+  },
+  "userMenu": {
+    "profile": "个人中心",
+    "help": "问题 & 帮助",
+    "logout": "退出登录"
+  },
+  "sidebar": {
+    "brand": "Shadcn Admin",
+    "dashboard": "仪表盘",
+    "general": "通用",
+    "system": "系统",
+    "setting": {
+      "title": "设置",
+      "users": "用户管理",
+      "roles": "角色管理",
+      "permissions": "权限管理",
+      "menus": "菜单管理"
+    }
+  }
+}

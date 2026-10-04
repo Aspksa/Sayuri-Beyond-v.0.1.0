@@ -1,0 +1,241 @@
+{
+  "global": {
+    "copyright": "SAYURI BEYOND v0.1.0"
+  },
+  "customConfig": {
+    "title": "Preferences",
+    "titleDesc": "These settings only apply in development mode and won't affect production builds.",
+    "themeMode": {
+      "label": "Theme Mode",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "color": "Color",
+    "colors": {
+      "zinc": "Zinc",
+      "blue": "Blue",
+      "green": "Green",
+      "orange": "Orange",
+      "rose": "Rose",
+      "violet": "Violet"
+    },
+    "radius": "Radius",
+    "grayscale": "Grayscale Mode",
+    "other": "Other",
+    "siderMenuType": {
+      "label": "Sidebar Style",
+      "sub": "Sub Menu",
+      "group": "Grouped"
+    },
+    "layoutMode": {
+      "label": "Layout Mode",
+      "side": "Side",
+      "top": "Top",
+      "mix": "Mix",
+      "column": "Column"
+    },
+    "autoSplitMenu": "Auto Split Menu",
+    "tabs": {
+      "label": "Page Tabs",
+      "showTabs": "Show Tab Bar",
+      "homePinned": "Pin Home Tab",
+      "homePinnedDesc": "The home tab cannot be closed",
+      "showIcon": "Show Tab Icons",
+      "keepAlive": "Keep Alive",
+      "keepAliveDesc": "Preserve page state and scroll position when switching tabs",
+      "style": "Tab Style",
+      "styleCard": "Card",
+      "styleSmooth": "Smooth",
+      "styleDynamic": "Dynamic",
+      "maximize": "Maximize",
+      "restore": "Restore",
+      "contextMenu": {
+        "refresh": "Refresh",
+        "close": "Close",
+        "closeLeft": "Close Left",
+        "closeRight": "Close Right",
+        "closeOther": "Close Others",
+        "closeAll": "Close All"
+      }
+    },
+    "settingTab": {
+      "general": "General",
+      "appearance": "Appearance",
+      "layout": "Layout"
+    },
+    "animation": {
+      "label": "Animation",
+      "navigationProgress": "Navigation Progress Bar",
+      "pageTransition": "Page Transition",
+      "pageTransitionType": {
+        "fade": "Fade",
+        "slideUp": "Slide Up",
+        "slideRight": "Slide Right",
+        "zoom": "Zoom"
+      },
+      "routeLoading": "Route Loading Skeleton",
+      "routeLoadingDesc": "Show a skeleton screen while data loads before entering a page"
+    },
+    "language": "Language",
+    "copySettings": "Copy",
+    "copySuccess": "Copied!",
+    "copySuccessDesc": "Please update the preferences object in src/preferences.ts"
+  },
+  "auth": {
+    "login": {
+      "header": {
+        "title": "SAYURI BEYOND",
+        "description": "Enter your credentials to sign in"
+      },
+      "form": {
+        "email": "Email",
+        "email_placeholder": "Enter your email",
+        "password": "Password",
+        "password_placeholder": "Enter your password",
+        "submit": "Sign In"
+      },
+      "third_party": {
+        "description": "Or continue with",
+        "github": "GitHub",
+        "google": "Google"
+      },
+      "footer": {
+        "description": "By continuing, you agree to our <0>{{service}}</0> and <1>{{privacy}}</1>",
+        "service_text": "Terms of Service",
+        "service_link": "#",
+        "privacy_text": "Privacy Policy",
+        "privacy_link": "#"
+      },
+      "error_default": "Login failed",
+      "error_invalid_credentials": "Invalid email or password",
+      "success": "Login successful"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "Ready-to-use admin template",
+      "title": "Modern Admin Dashboard, Ship Faster",
+      "description": "Built with React 19, TanStack Router, and shadcn/ui. Auth, i18n, and theming included out of the box.",
+      "cta_primary": "Go to Dashboard",
+      "cta_secondary": "Sign In"
+    },
+    "features": {
+      "title": "Core Features",
+      "subtitle": "Everything you need, ready to go",
+      "dashboard": {
+        "title": "Dashboard",
+        "desc": "Intuitive data visualization to monitor your business at a glance."
+      },
+      "auth": {
+        "title": "Authentication",
+        "desc": "Login, token refresh, and route guards built in — secure by default."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "desc": "Multi-dimensional charts and reports for deep business insights."
+      },
+      "ai": {
+        "title": "AI Ready",
+        "desc": "Pre-wired integration points to plug in AI features with ease."
+      },
+      "config": {
+        "title": "Configurable",
+        "desc": "Theme, language, and layout are all customizable to fit your needs."
+      },
+      "performance": {
+        "title": "Blazing Fast",
+        "desc": "Vite-powered build with lazy routes for instant page loads."
+      }
+    }
+  },
+  "setting": {
+    "users": {
+      "title": "User Management",
+      "total": "{{count}} users total",
+      "col": {
+        "id": "ID",
+        "nick_name": "Name",
+        "user_name": "Username",
+        "email": "Email",
+        "status": "Status",
+        "last_login": "Last Login",
+        "actions": "Actions"
+      },
+      "status": {
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "pagination": {
+        "page": "Page {{page}} of {{total}}",
+        "prev": "Previous",
+        "next": "Next"
+      },
+      "edit": {
+        "title": "Edit User",
+        "user_name": "Username",
+        "email": "Email",
+        "nick_name": "Name",
+        "status": "Status",
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "delete": {
+        "title": "Confirm Delete",
+        "description": "This action cannot be undone. Are you sure you want to delete this user?",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Welcome back. Here's a system overview.",
+    "stats": {
+      "users": "Total Users",
+      "roles": "Total Roles",
+      "permissions": "Total Permissions",
+      "menus": "Total Menus",
+      "trend": "Increase from last month"
+    },
+    "recentUsers": {
+      "title": "Recent Users",
+      "description": "Last 5 users by login time",
+      "col": {
+        "nick_name": "Name",
+        "email": "Email",
+        "status": "Status",
+        "last_login": "Last Login"
+      }
+    }
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist or has been removed.",
+    "back": "Back to Home"
+  },
+  "userMenu": {
+    "profile": "Profile",
+    "timezone": "Timezone",
+    "timezoneDST": "Amber",
+    "timezoneDSTDesc": "Currently in daylight saving time",
+    "timezoneStd": "Blue",
+    "timezoneStdDesc": "Currently in standard time",
+    "help": "Help & Support",
+    "logout": "Sign Out"
+  },
+  "sidebar": {
+    "brand": "Shadcn Admin",
+    "dashboard": "Dashboard",
+    "general": "General",
+    "system": "System",
+    "setting": {
+      "title": "Settings",
+      "users": "Users",
+      "roles": "Roles",
+      "permissions": "Permissions",
+      "menus": "Menus"
+    }
+  }
+}
