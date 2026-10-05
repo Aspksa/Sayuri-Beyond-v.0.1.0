@@ -27,6 +27,7 @@ class LearningCycleRequest(BaseModel):
     errors: list[str] = Field(default_factory=list)
     observed_lessons: list[str] = Field(default_factory=list)
     evidence: list[str] = Field(default_factory=list)
+    retrieved_memory_ids: list[str] = Field(default_factory=list)
     confidence: float = Field(default=0.5, ge=0, le=1)
 
 
@@ -38,6 +39,10 @@ class StrategyCandidateRequest(BaseModel):
     confidence: float = Field(ge=0, le=1)
     regression_passed: bool = False
     safety_passed: bool = False
+
+
+class StrategyRollbackRequest(BaseModel):
+    reason: str = Field(min_length=1, max_length=2_000)
 
 
 class FactCreateRequest(BaseModel):
@@ -57,4 +62,3 @@ class HypothesisCreateRequest(BaseModel):
 class HypothesisUpdateRequest(BaseModel):
     status: Literal["open", "confirmed", "rejected"]
     confidence: float | None = Field(default=None, ge=0, le=1)
-\n\nclass StrategyRollbackRequest(BaseModel):\n    reason: str = Field(min_length=1, max_length=2_000)\n
