@@ -57,3 +57,4 @@ class HypothesisCreateRequest(BaseModel):
 class HypothesisUpdateRequest(BaseModel):
     status: Literal["open", "confirmed", "rejected"]
     confidence: float | None = Field(default=None, ge=0, le=1)
+\n\nclass StrategyRollbackRequest(BaseModel):\n    reason: str = Field(min_length=1, max_length=2_000)\n
