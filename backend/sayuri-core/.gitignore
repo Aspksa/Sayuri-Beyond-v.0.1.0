@@ -1,5 +1,6 @@
 .venv/
 .venv-evolution/
+.venv-memrl/
 .env
 data/
 __pycache__/

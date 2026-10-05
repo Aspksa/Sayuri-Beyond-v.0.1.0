@@ -25,4 +25,4 @@ Write-Host "Running Evolution Worker optimizer health check..."
 
 Write-Host ""
 Write-Host "SAYURI Evolution Worker installed successfully."
-Write-Host "This environment is used only for heavy optimization/evolution jobs."
+Write-Host "This environment is used only for heavy EvoAgentX optimization/evolution jobs."

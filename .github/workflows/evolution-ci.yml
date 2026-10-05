@@ -9,6 +9,13 @@ on:
       - "backend/sayuri-core/src/sayuri_core/evolution_engine.py"
       - "backend/sayuri-core/src/sayuri_core/evolution_healthcheck.py"
       - ".github/workflows/evolution-ci.yml"
+  pull_request:
+    paths:
+      - "backend/sayuri-core/pyproject.toml"
+      - "backend/sayuri-core/install-evolution.ps1"
+      - "backend/sayuri-core/src/sayuri_core/evolution_engine.py"
+      - "backend/sayuri-core/src/sayuri_core/evolution_healthcheck.py"
+      - ".github/workflows/evolution-ci.yml"
   workflow_dispatch:
 
 jobs:

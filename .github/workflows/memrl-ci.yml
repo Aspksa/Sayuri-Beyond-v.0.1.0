@@ -1,0 +1,45 @@
+name: MemRL Runtime
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/sayuri-core/workers/memrl/**"
+      - "backend/sayuri-core/install-memrl.ps1"
+      - "backend/sayuri-core/src/sayuri_core/memrl_adapter.py"
+      - "backend/sayuri-core/src/sayuri_core/evolution_gate.py"
+      - ".github/workflows/memrl-ci.yml"
+  pull_request:
+    paths:
+      - "backend/sayuri-core/workers/memrl/**"
+      - "backend/sayuri-core/install-memrl.ps1"
+      - "backend/sayuri-core/src/sayuri_core/memrl_adapter.py"
+      - "backend/sayuri-core/src/sayuri_core/evolution_gate.py"
+      - ".github/workflows/memrl-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  memrl-runtime:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/sayuri-core
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/sayuri-core/workers/memrl/requirements.txt
+
+      - name: Install isolated MemRL runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r workers/memrl/requirements.txt
+
+      - name: Verify MemRL MemoryService import
+        run: python workers/memrl/healthcheck.py

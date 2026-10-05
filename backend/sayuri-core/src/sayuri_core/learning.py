@@ -3,6 +3,7 @@ from __future__ import annotations
 from statistics import fmean
 from typing import Any
 
+from .evolution_gate import EvolutionGate
 from .schemas import LearningCycleRequest, ScoreVector, StrategyCandidateRequest
 from .storage import SQLiteStore
 
@@ -92,10 +93,15 @@ class Teacher:
 
 
 class LearningEngine:
-    def __init__(self, store: SQLiteStore) -> None:
+    def __init__(
+        self,
+        store: SQLiteStore,
+        evolution_gate: EvolutionGate | None = None,
+    ) -> None:
         self.store = store
         self.evaluator = Evaluator()
         self.teacher = Teacher()
+        self.evolution_gate = evolution_gate
 
     def complete_task(self, request: LearningCycleRequest) -> dict[str, Any]:
         evaluation = self.evaluator.evaluate(request.scores)
@@ -165,11 +171,20 @@ class LearningEngine:
             success=bool(evaluation["passed"]),
         )
 
+        evolution_result = None
+        if self.evolution_gate is not None:
+            evolution_result = self.evolution_gate.observe(
+                request,
+                evaluation,
+                lesson["lessons"],
+            )
+
         return {
             "evaluation": evaluation_record,
             "teacher": teacher_record,
             "reflection": reflection,
             "experience": experience,
+            "evolution": evolution_result,
             "next_step": (
                 "retain_strategy"
                 if evaluation["passed"]
@@ -184,6 +199,9 @@ class StrategyLibrary:
 
     def __init__(self, store: SQLiteStore) -> None:
         self.store = store
+
+    def rollback(self, strategy_key: str, reason: str) -> dict[str, Any]:
+        return self.store.rollback_strategy(strategy_key, reason)
 
     def submit(self, candidate: StrategyCandidateRequest) -> dict[str, Any]:
         active = self.store.active_strategy(candidate.strategy_key)
