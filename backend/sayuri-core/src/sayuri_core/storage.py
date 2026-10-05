@@ -271,17 +271,15 @@ class SQLiteStore:
 
     @staticmethod
     def _search_tokens(query: str) -> list[str]:
-        return sorted(
-            {
-                token
-                for token in re.findall(
-                    r"[^\\W_]+(?:-[^\\W_]+)*",
-                    query.casefold(),
-                    flags=re.UNICODE,
-                )
-                if len(token) >= 2
-            }
-        )
+        cleaned = {
+            token.strip("-_")
+            for token in re.findall(
+                r"[\w-]+",
+                query.casefold(),
+                flags=re.UNICODE,
+            )
+        }
+        return sorted(token for token in cleaned if len(token) >= 2)
 
     def search_facts(self, query: str, limit: int = 8) -> list[dict[str, Any]]:
         tokens = self._search_tokens(query)
