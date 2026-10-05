@@ -4,11 +4,12 @@ Backend cognitive layer for **SAYURI BEYOND v0.1.0 — Awakening**.
 
 ## Engines
 
-- **EvoAgentX 0.1.4** — workflow generation/evaluation and supervised evolution.
+- **EvoAgentX 0.1.4 + optimizer extras** — workflow generation, evaluation and supervised optimization.
 - **OpenCog Hyperon 0.2.10 / MeTTa** — symbolic logic and knowledge reasoning.
-- **Sayuri Learning Layer** — our own persistent learning, teacher, reflection, strategy governance and knowledge checks.
+- **Sayuri Learning Layer** — persistent learning, teacher, reflection, strategy governance and knowledge checks.
+- **Evolution Lab** — controlled candidate generation, benchmark comparison and gated promotion.
 
-These engines are dependencies, not the identity of Sayuri. Sayuri-specific memory, verified knowledge, policies and experience remain in this repository.
+EvoAgentX optimizers available to the project include TextGrad, AFlow, MIPRO and EvoPrompt GA/DE. They are capability providers; they do not own Sayuri's identity, memory or promotion policy.
 
 ## Cognitive loop
 
@@ -17,25 +18,38 @@ Task result
    ↓
 Evaluator
    ↓
-Teacher
+Teacher v2
    ↓
 Reflection
    ↓
 Experience Memory
    ↓
-Strategy Library
-   ↓
+Evolution Lab
+   ├── candidate A
+   ├── candidate B
+   ├── candidate C
+   └── candidate D
+          ↓
+Structured Benchmark Sandbox
+          ↓
+Strategy Library gates
+          ↓
 Development Metrics
 ```
 
-Strategy promotion currently requires all four gates:
+## Evolution safety
+
+The current sandbox does **not execute generated source code**. Candidate strategies are compared using explicit score vectors and must pass all of these gates:
 
 - regression tests passed;
 - safety tests passed;
 - confidence >= 0.75;
-- measurable quality gain over the active strategy.
+- benchmark score improves by at least 0.01;
+- Strategy Library accepts the candidate against the active version.
 
 Self-modifying source code remains disabled.
+
+A future code-evolution sandbox must be a separate isolated process/container with a permission boundary and rollback.
 
 ## Persistence
 
@@ -67,11 +81,16 @@ From `backend/sayuri-core`:
 ./run.ps1
 ```
 
+The installer now installs EvoAgentX with its optimizer extras.
+
 ## Main API
 
 - `GET /health`
 - `POST /v1/logic/evaluate`
 - `GET /v1/evolution/status`
+- `POST /v1/evolution/propose`
+- `POST /v1/evolution/benchmark`
+- `GET /v1/evolution/experiments`
 - `POST /v1/learning/complete-task`
 - `GET /v1/memory/experiences`
 - `POST /v1/strategies/candidates`
