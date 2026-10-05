@@ -4,10 +4,13 @@ from fastapi import FastAPI, HTTPException, Query
 
 from .config import get_settings
 from .evolution_engine import EvolutionEngine
+from .evolution_lab import EvolutionLab
 from .knowledge import KnowledgeStore
 from .learning import DevelopmentMetrics, LearningEngine, StrategyLibrary
 from .logic_engine import LogicEngine
 from .schemas import (
+    EvolutionBenchmarkRequest,
+    EvolutionProposalRequest,
     FactCreateRequest,
     HypothesisCreateRequest,
     HypothesisUpdateRequest,
@@ -32,6 +35,7 @@ learning = LearningEngine(store)
 strategies = StrategyLibrary(store)
 knowledge = KnowledgeStore(store)
 development = DevelopmentMetrics(store)
+evolution_lab = EvolutionLab(store, strategies)
 
 
 @app.get("/health")
@@ -49,6 +53,7 @@ def health() -> dict:
         "learning": {
             "available": settings.enable_learning,
             "mode": "supervised",
+            "teacher": "teacher_v2",
             "self_modifying_code": False,
         },
     }
@@ -59,6 +64,25 @@ def evolution_status() -> dict:
     if not settings.enable_evolution:
         return {"available": False, "disabled": True}
     return evolution.status()
+
+
+@app.post("/v1/evolution/propose")
+def propose_evolution(request: EvolutionProposalRequest) -> dict:
+    if not settings.enable_evolution:
+        raise HTTPException(status_code=503, detail="evolution engine is disabled")
+    return evolution_lab.propose(request)
+
+
+@app.post("/v1/evolution/benchmark")
+def benchmark_evolution(request: EvolutionBenchmarkRequest) -> dict:
+    if not settings.enable_evolution:
+        raise HTTPException(status_code=503, detail="evolution engine is disabled")
+    return evolution_lab.benchmark(request)
+
+
+@app.get("/v1/evolution/experiments")
+def evolution_experiments(limit: int = Query(default=50, ge=1, le=500)) -> dict:
+    return evolution_lab.recent_experiments(limit=limit)
 
 
 @app.post("/v1/logic/evaluate")
