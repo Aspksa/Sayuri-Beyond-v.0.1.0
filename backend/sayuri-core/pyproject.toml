@@ -24,7 +24,9 @@ dev = [
   "ruff>=0.8,<1"
 ]
 evolution = [
-  "evoagentx[all]==0.1.4",
+  "evoagentx[all]==0.1.4"
+]
+memrl = [
   "memrl @ git+https://github.com/MemTensor/MemRL.git@c1b322ca43de36ddf64c6712f89d0095bfc35ce0"
 ]
 
@@ -32,6 +34,7 @@ evolution = [
 sayuri-core = "sayuri_core.__main__:main"
 sayuri-core-health = "sayuri_core.healthcheck:main"
 sayuri-evolution-health = "sayuri_core.evolution_healthcheck:main"
+sayuri-memrl-health = "sayuri_core.memrl_healthcheck:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
