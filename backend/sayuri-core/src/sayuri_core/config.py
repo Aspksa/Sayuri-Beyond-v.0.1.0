@@ -14,8 +14,10 @@ class Settings(BaseSettings):
     environment: str = "development"
     host: str = "127.0.0.1"
     port: int = 8765
+    data_dir: str = "./data"
     enable_logic: bool = True
     enable_evolution: bool = True
+    enable_learning: bool = True
 
 
 @lru_cache
