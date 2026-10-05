@@ -1,6 +1,1 @@
-.venv/
-.env
-__pycache__/
-.pytest_cache/
-.ruff_cache/
-*.pyc
+.venv/\n.env\ndata/\n__pycache__/\n.pytest_cache/\n.ruff_cache/\n*.pyc\n
