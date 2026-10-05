@@ -1,0 +1,37 @@
+name: Evolution Runtime
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/sayuri-core/pyproject.toml"
+      - "backend/sayuri-core/install-evolution.ps1"
+      - "backend/sayuri-core/src/sayuri_core/evolution_engine.py"
+      - "backend/sayuri-core/src/sayuri_core/evolution_healthcheck.py"
+      - ".github/workflows/evolution-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  evolution-runtime:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/sayuri-core
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install isolated evolution runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[evolution]"
+
+      - name: Verify EvoAgentX optimizer imports
+        run: python -m sayuri_core.evolution_healthcheck
