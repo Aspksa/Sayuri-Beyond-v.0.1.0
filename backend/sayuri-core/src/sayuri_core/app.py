@@ -4,9 +4,11 @@ from fastapi import FastAPI, HTTPException, Query
 
 from .config import get_settings
 from .evolution_engine import EvolutionEngine
+from .evolution_gate import EvolutionGate
 from .knowledge import KnowledgeStore
 from .learning import DevelopmentMetrics, LearningEngine, StrategyLibrary
 from .logic_engine import LogicEngine
+from .memrl_adapter import MemRLAdapter
 from .schemas import (
     FactCreateRequest,
     HypothesisCreateRequest,
@@ -14,6 +16,7 @@ from .schemas import (
     LearningCycleRequest,
     LogicRequest,
     StrategyCandidateRequest,
+    StrategyRollbackRequest,
 )
 from .storage import SQLiteStore
 
@@ -28,7 +31,9 @@ data_path = Path(settings.data_dir)
 store = SQLiteStore(data_path / "sayuri.db")
 evolution = EvolutionEngine()
 logic = LogicEngine() if settings.enable_logic else None
-learning = LearningEngine(store)
+memrl = MemRLAdapter(store, enabled=settings.enable_memrl)
+evolution_gate = EvolutionGate(store, memrl)
+learning = LearningEngine(store, evolution_gate=evolution_gate)
 strategies = StrategyLibrary(store)
 knowledge = KnowledgeStore(store)
 development = DevelopmentMetrics(store)
@@ -46,10 +51,12 @@ def health() -> dict:
         "evolution": evolution.status()
         if settings.enable_evolution
         else {"available": False, "disabled": True},
+        "memrl": memrl.status(),
         "learning": {
             "available": settings.enable_learning,
             "mode": "supervised",
             "self_modifying_code": False,
+            "automatic_strategy_promotion": False,
         },
     }
 
@@ -57,8 +64,30 @@ def health() -> dict:
 @app.get("/v1/evolution/status")
 def evolution_status() -> dict:
     if not settings.enable_evolution:
-        return {"available": False, "disabled": True}
-    return evolution.status()
+        return {"available": False, "disabled": True, "memrl": memrl.status()}
+    result = evolution.status()
+    result["memrl"] = memrl.status()
+    result["gate"] = {
+        "mode": "supervised",
+        "minimum_confidence": evolution_gate.minimum_confidence,
+        "minimum_reward": evolution_gate.minimum_reward,
+        "automatic_strategy_promotion": False,
+        "self_modifying_code": False,
+    }
+    return result
+
+
+@app.get("/v1/evolution/memrl")
+def memrl_status() -> dict:
+    return memrl.status()
+
+
+@app.get("/v1/evolution/episodes")
+def evolution_episodes(limit: int = Query(default=50, ge=1, le=500)) -> dict:
+    return {
+        "items": store.list_events("memrl_episode", limit=limit),
+        "gate_events": store.list_events("evolution_gate", limit=limit),
+    }
 
 
 @app.post("/v1/logic/evaluate")
@@ -89,6 +118,20 @@ def recent_experience(limit: int = Query(default=50, ge=1, le=500)) -> dict:
 @app.post("/v1/strategies/candidates")
 def submit_strategy_candidate(request: StrategyCandidateRequest) -> dict:
     return strategies.submit(request)
+
+
+@app.post("/v1/strategies/{strategy_key}/rollback")
+def rollback_strategy(
+    strategy_key: str,
+    request: StrategyRollbackRequest,
+) -> dict:
+    try:
+        return strategies.rollback(strategy_key, request.reason)
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail=f"rollback unavailable: {exc.args[0]}",
+        ) from exc
 
 
 @app.get("/v1/strategies")
