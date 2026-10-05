@@ -20,9 +20,9 @@ $Python = Join-Path $Here ".venv-evolution\Scripts\python.exe"
 & $Python -m pip install -e ".[evolution]"
 
 Write-Host ""
-Write-Host "Running Evolution Worker optimizer health check..."
+Write-Host "Running Evolution Worker optimizer + MemRL health check..."
 & $Python -m sayuri_core.evolution_healthcheck
 
 Write-Host ""
 Write-Host "SAYURI Evolution Worker installed successfully."
-Write-Host "This environment is used only for heavy optimization/evolution jobs."
+Write-Host "This environment is used only for heavy optimization, MemRL and evolution jobs."
