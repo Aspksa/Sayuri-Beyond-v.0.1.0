@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Cognitive backend for SAYURI BEYOND"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-  "evoagentx[optimizers,tools,benchmarks,viz]==0.1.4",
+  "evoagentx==0.1.4",
   "hyperon==0.2.10",
   "fastapi>=0.115,<1",
   "uvicorn[standard]>=0.30,<1",
@@ -23,10 +23,14 @@ dev = [
   "httpx>=0.27,<1",
   "ruff>=0.8,<1"
 ]
+evolution = [
+  "evoagentx[all]==0.1.4"
+]
 
 [project.scripts]
 sayuri-core = "sayuri_core.__main__:main"
 sayuri-core-health = "sayuri_core.healthcheck:main"
+sayuri-evolution-health = "sayuri_core.evolution_healthcheck:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
