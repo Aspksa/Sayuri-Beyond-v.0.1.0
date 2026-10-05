@@ -1,37 +1,24 @@
 from __future__ import annotations
 
-from importlib import import_module
 from importlib.metadata import PackageNotFoundError, version
 from typing import Any
 
 
 class EvolutionEngine:
-    """Adapter around EvoAgentX with capability probing."""
+    """Lightweight Sayuri-side adapter for EvoAgentX.
+
+    Heavy optimizer runtimes live in a separate evolution environment so normal
+    chat/API startup does not import RAG, browser, vector or ML dependencies.
+    """
 
     package_name = "evoagentx"
-
-    optimizer_imports = {
-        "textgrad": ("evoagentx.optimizers", "TextGradOptimizer"),
-        "aflow": ("evoagentx.optimizers", "AFlowOptimizer"),
-        "mipro": ("evoagentx.optimizers", "MiproOptimizer"),
-        "evoprompt_de": ("evoagentx.optimizers.evoprompt_optimizer", "DEOptimizer"),
-        "evoprompt_ga": ("evoagentx.optimizers.evoprompt_optimizer", "GAOptimizer"),
-    }
-
-    @classmethod
-    def _optimizer_status(cls) -> dict[str, dict[str, Any]]:
-        status: dict[str, dict[str, Any]] = {}
-        for name, (module_name, symbol) in cls.optimizer_imports.items():
-            try:
-                module = import_module(module_name)
-                getattr(module, symbol)
-                status[name] = {"available": True}
-            except Exception as exc:  # diagnostic boundary
-                status[name] = {
-                    "available": False,
-                    "error": f"{type(exc).__name__}: {exc}",
-                }
-        return status
+    optimizer_names = (
+        "textgrad",
+        "aflow",
+        "mipro",
+        "evoprompt_de",
+        "evoprompt_ga",
+    )
 
     def status(self) -> dict[str, Any]:
         try:
@@ -43,30 +30,27 @@ class EvolutionEngine:
                 "error": "package not installed",
             }
 
-        optimizers = self._optimizer_status()
         return {
             "available": True,
             "engine": "evoagentx",
             "version": installed_version,
             "mode": "supervised",
             "self_modifying_code": False,
-            "optimizers": optimizers,
+            "optimizer_runtime": {
+                "mode": "isolated_worker",
+                "environment": ".venv-evolution",
+                "required_for": list(self.optimizer_names),
+            },
             "capabilities": [
-                "workflow_generation",
                 "evaluation",
-                "workflow_optimization",
-                "prompt_evolution",
-                "memory_integration",
+                "controlled_strategy_evolution",
                 "human_in_the_loop",
+                "external_optimizer_worker",
             ],
         }
 
     def generate_workflow(self, goal: str, llm: Any) -> Any:
-        if not goal.strip():
-            raise ValueError("goal must not be empty")
-        if llm is None:
-            raise ValueError("a configured LLM instance is required")
-
-        from evoagentx.workflow import WorkFlowGenerator
-
-        return WorkFlowGenerator(llm=llm).generate_workflow(goal)
+        raise RuntimeError(
+            "Heavy EvoAgentX workflow generation is isolated from Sayuri Core. "
+            "Run it through the Evolution Worker environment."
+        )
