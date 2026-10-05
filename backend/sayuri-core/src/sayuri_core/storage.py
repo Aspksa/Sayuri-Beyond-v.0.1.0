@@ -140,6 +140,71 @@ class SQLiteStore:
                 (status, json.dumps(payload, ensure_ascii=False), strategy_id),
             )
 
+    def rollback_strategy(
+        self,
+        strategy_key: str,
+        reason: str,
+    ) -> dict[str, Any]:
+        """Atomically restore the latest superseded strategy."""
+        with self._lock, self._conn:
+            active_row = self._conn.execute(
+                """SELECT id,version,payload FROM strategies
+                WHERE strategy_key=? AND status='active'
+                ORDER BY version DESC LIMIT 1""",
+                (strategy_key,),
+            ).fetchone()
+            if active_row is None:
+                raise KeyError("active_strategy")
+
+            previous_row = self._conn.execute(
+                """SELECT id,version,payload FROM strategies
+                WHERE strategy_key=? AND status='superseded' AND version<?
+                ORDER BY version DESC LIMIT 1""",
+                (strategy_key, int(active_row["version"])),
+            ).fetchone()
+            if previous_row is None:
+                raise KeyError("previous_strategy")
+
+            active = json.loads(active_row["payload"])
+            restored = json.loads(previous_row["payload"])
+            active["status"] = "rolled_back"
+            restored["status"] = "active"
+
+            self._conn.execute(
+                "UPDATE strategies SET status='rolled_back', payload=? WHERE id=?",
+                (json.dumps(active, ensure_ascii=False), active_row["id"]),
+            )
+            self._conn.execute(
+                "UPDATE strategies SET status='active', payload=? WHERE id=?",
+                (json.dumps(restored, ensure_ascii=False), previous_row["id"]),
+            )
+
+            event = {
+                "id": str(uuid.uuid4()),
+                "kind": "strategy_rollback",
+                "created_at": utc_now(),
+                "strategy_key": strategy_key,
+                "reason": reason,
+                "rolled_back_id": active_row["id"],
+                "restored_id": previous_row["id"],
+                "restored_version": int(previous_row["version"]),
+            }
+            self._conn.execute(
+                "INSERT INTO events(id, kind, created_at, payload) VALUES (?, ?, ?, ?)",
+                (
+                    event["id"],
+                    event["kind"],
+                    event["created_at"],
+                    json.dumps(event, ensure_ascii=False),
+                ),
+            )
+
+        return {
+            "rolled_back": active,
+            "restored": restored,
+            "event": event,
+        }
+
     def list_strategies(self, limit: int = 200) -> list[dict[str, Any]]:
         with self._lock:
             rows = self._conn.execute(
