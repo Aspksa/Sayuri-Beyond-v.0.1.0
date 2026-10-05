@@ -15,14 +15,16 @@ if (Get-Command py -ErrorAction SilentlyContinue) {
 }
 
 $Python = Join-Path $Here ".venv-memrl\Scripts\python.exe"
+$Requirements = Join-Path $Here "workers\memrl\requirements.txt"
+$Healthcheck = Join-Path $Here "workers\memrl\healthcheck.py"
 
 & $Python -m pip install --upgrade pip
-& $Python -m pip install -e ".[memrl]"
+& $Python -m pip install -r $Requirements
 
 Write-Host ""
 Write-Host "Running MemRL Worker health check..."
-& $Python -m sayuri_core.memrl_healthcheck
+& $Python $Healthcheck
 
 Write-Host ""
 Write-Host "SAYURI MemRL Worker installed successfully."
-Write-Host "This environment is isolated from EvoAgentX because their OpenAI SDK dependency ranges currently conflict."
+Write-Host "MemRL is fully isolated from Sayuri Core and EvoAgentX dependencies."
