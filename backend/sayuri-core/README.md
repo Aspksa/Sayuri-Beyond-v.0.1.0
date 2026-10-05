@@ -27,11 +27,13 @@ Installed in `.venv-evolution`:
 
 ### 3. MemRL Worker — episodic reinforcement
 
-Installed separately in `.venv-memrl`:
+Installed separately in `.venv-memrl` from `workers/memrl/requirements.txt`:
 
 - MemRL 0.1.0;
 - MemRL MemoryService;
 - its MemoryOS/runtime dependencies.
+
+The MemRL worker does **not install the `sayuri-core` package**, so EvoAgentX and its LiteLLM/OpenAI dependency chain never enter the MemRL environment.
 
 The two heavy workers are intentionally separate. Their current transitive OpenAI SDK requirements are incompatible in one Python environment, so SAYURI does not force or bypass dependency resolution.
 
