@@ -2,14 +2,51 @@
 
 Backend cognitive layer for **SAYURI BEYOND v0.1.0 — Awakening**.
 
-## Engines
+## Runtime split
 
-- **EvoAgentX 0.1.4 + optimizer extras** — workflow generation, evaluation and supervised optimization.
-- **OpenCog Hyperon 0.2.10 / MeTTa** — symbolic logic and knowledge reasoning.
-- **Sayuri Learning Layer** — persistent learning, teacher, reflection, strategy governance and knowledge checks.
-- **Evolution Lab** — controlled candidate generation, benchmark comparison and gated promotion.
+Sayuri now uses two Python environments on purpose.
 
-EvoAgentX optimizers available to the project include TextGrad, AFlow, MIPRO and EvoPrompt GA/DE. They are capability providers; they do not own Sayuri's identity, memory or promotion policy.
+### 1. Lightweight Core — normal daily runtime
+
+Contains:
+
+- EvoAgentX base 0.1.4;
+- Hyperon / MeTTa 0.2.10;
+- FastAPI;
+- Sayuri memory, learning, Teacher v2, knowledge and Evolution Lab governance.
+
+Install:
+
+```powershell
+./install.ps1
+./run.ps1
+```
+
+Environment:
+
+```text
+.venv/
+```
+
+This is the environment used by the normal chat/API process.
+
+### 2. Evolution Worker — heavy optimizer runtime
+
+Contains the official full EvoAgentX optional stack required by its optimizer import graph, including TextGrad, AFlow, MIPRO, EvoPrompt, RAG/tool dependencies and ML libraries.
+
+Install only when evolution jobs are needed:
+
+```powershell
+./install-evolution.ps1
+```
+
+Environment:
+
+```text
+.venv-evolution/
+```
+
+This separation prevents heavy RAG/browser/ML dependencies from slowing ordinary Sayuri startup.
 
 ## Cognitive loop
 
@@ -39,17 +76,17 @@ Development Metrics
 
 ## Evolution safety
 
-The current sandbox does **not execute generated source code**. Candidate strategies are compared using explicit score vectors and must pass all of these gates:
+The normal Evolution Lab does **not execute generated source code**. Candidate strategies are compared using explicit score vectors and must pass:
 
-- regression tests passed;
-- safety tests passed;
+- regression tests;
+- safety tests;
 - confidence >= 0.75;
-- benchmark score improves by at least 0.01;
-- Strategy Library accepts the candidate against the active version.
+- benchmark improvement >= 0.01;
+- Strategy Library promotion policy.
 
 Self-modifying source code remains disabled.
 
-A future code-evolution sandbox must be a separate isolated process/container with a permission boundary and rollback.
+The heavy Evolution Worker is capability-isolated from the normal API process. Later, communication between Core and Worker will use an explicit job protocol rather than importing heavy optimizer modules into the chat process.
 
 ## Persistence
 
@@ -65,23 +102,12 @@ The database is excluded from Git.
 
 Facts are stored with confidence and source. A new value for the same entity + attribute does **not** silently overwrite the old value: Sayuri creates an open contradiction record.
 
-Hypotheses are kept separate from facts and have explicit states:
+Hypotheses are separate from facts and use explicit states:
 `open`, `confirmed`, `rejected`.
 
 ## Development index
 
-`GET /v1/development` returns a transparent operational learning-progress index based on quality, pass rate, accumulated experience, verified facts, active strategies and reflections. It is **not an IQ score** and not a claim of general intelligence.
-
-## Windows installation
-
-From `backend/sayuri-core`:
-
-```powershell
-./install.ps1
-./run.ps1
-```
-
-The installer now installs EvoAgentX with its optimizer extras.
+`GET /v1/development` returns a transparent operational learning-progress index based on real local records. It is not an IQ score.
 
 ## Main API
 
@@ -101,3 +127,17 @@ The installer now installs EvoAgentX with its optimizer extras.
 - `PATCH /v1/knowledge/hypotheses/{id}`
 - `GET /v1/knowledge/hypotheses`
 - `GET /v1/development`
+
+## Health checks
+
+Lightweight Core:
+
+```powershell
+.\.venv\Scripts\python.exe -m sayuri_core.healthcheck
+```
+
+Heavy Evolution Worker:
+
+```powershell
+.\.venv-evolution\Scripts\python.exe -m sayuri_core.evolution_healthcheck
+```
