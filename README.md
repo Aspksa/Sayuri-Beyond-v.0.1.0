@@ -55,3 +55,21 @@ The UI shell is adapted from **authdoor/shadcn-admin**:
 https://github.com/authdoor/shadcn-admin
 
 Used under the MIT License. The original copyright notice is preserved in `LICENSE`.
+
+
+## Cognitive Core v0.2
+
+The authenticated workspace now includes a persistent **Sayuri companion**
+panel. It follows the active route, sends ephemeral screen context to the local
+Core, recalls relevant SQLite knowledge/experience, runs the Cognitive
+Governor/Verifier loop, and renders a user-safe Cognitive Timeline.
+
+Frontend connection:
+
+```text
+VITE_SAYURI_CORE_URL=http://127.0.0.1:8765
+```
+
+The default backend runtime is `mock`, so development and CI work without an
+external API key. Configure the real provider only in
+`backend/sayuri-core/.env`.

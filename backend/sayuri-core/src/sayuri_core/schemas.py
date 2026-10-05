@@ -59,6 +59,28 @@ class CognitiveCompleteRequest(LearningCycleRequest):
     clear_working_memory: bool = True
 
 
+class ScreenContextRequest(BaseModel):
+    session_id: str = Field(min_length=1, max_length=160)
+    route: str = Field(min_length=1, max_length=2_000)
+    title: str | None = Field(default=None, max_length=500)
+    module: str | None = Field(default=None, max_length=160)
+    selected_entity: str | None = Field(default=None, max_length=1_000)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class ChatTurn(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(min_length=1, max_length=20_000)
+
+
+class ChatRequest(BaseModel):
+    message: str = Field(min_length=1, max_length=20_000)
+    session_id: str = Field(min_length=1, max_length=160)
+    history: list[ChatTurn] = Field(default_factory=list, max_length=20)
+    context: dict[str, Any] = Field(default_factory=dict)
+    task_type: str = Field(default="chat", min_length=1, max_length=120)
+
+
 class StrategyCandidateRequest(BaseModel):
     strategy_key: str = Field(min_length=1, max_length=120)
     version: int = Field(ge=1)

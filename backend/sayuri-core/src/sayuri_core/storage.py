@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sqlite3
 import threading
 import uuid
@@ -267,6 +268,66 @@ class SQLiteStore:
                 FROM hypotheses ORDER BY updated_at DESC"""
             ).fetchall()
         return [{**dict(row), "evidence": json.loads(row["evidence"])} for row in rows]
+
+    @staticmethod
+    def _search_tokens(query: str) -> list[str]:
+        cleaned = {
+            token.strip("-_")
+            for token in re.findall(
+                r"[\w-]+",
+                query.casefold(),
+                flags=re.UNICODE,
+            )
+        }
+        return sorted(token for token in cleaned if len(token) >= 2)
+
+    def search_facts(self, query: str, limit: int = 8) -> list[dict[str, Any]]:
+        tokens = self._search_tokens(query)
+        if not tokens:
+            return []
+        with self._lock:
+            rows = self._conn.execute(
+                """SELECT id,entity,attribute,value,confidence,source,created_at
+                FROM facts WHERE active=1
+                ORDER BY confidence DESC, created_at DESC LIMIT 500"""
+            ).fetchall()
+
+        scored: list[tuple[int, float, dict[str, Any]]] = []
+        for row in rows:
+            item = dict(row)
+            haystack = " ".join(
+                str(item.get(key, ""))
+                for key in ("entity", "attribute", "value", "source")
+            ).casefold()
+            score = sum(1 for token in tokens if token in haystack)
+            if score:
+                scored.append((score, float(item["confidence"]), item))
+
+        scored.sort(key=lambda item: (item[0], item[1]), reverse=True)
+        return [item[2] for item in scored[: max(1, min(limit, 50))]]
+
+    def search_events(
+        self,
+        kind: str,
+        query: str,
+        limit: int = 8,
+        scan_limit: int = 500,
+    ) -> list[dict[str, Any]]:
+        tokens = self._search_tokens(query)
+        if not tokens:
+            return []
+        events = self.list_events(kind, limit=max(1, min(scan_limit, 1000)))
+        scored: list[tuple[int, dict[str, Any]]] = []
+        for event in events:
+            haystack = json.dumps(event, ensure_ascii=False).casefold()
+            score = sum(1 for token in tokens if token in haystack)
+            if score:
+                scored.append((score, event))
+        scored.sort(
+            key=lambda item: (item[0], item[1].get("created_at", "")),
+            reverse=True,
+        )
+        return [item[1] for item in scored[: max(1, min(limit, 50))]]
 
     def count_facts(self) -> int:
         with self._lock:

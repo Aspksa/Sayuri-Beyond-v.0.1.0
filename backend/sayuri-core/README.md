@@ -234,3 +234,72 @@ Heavy Evolution Worker:
 ```powershell
 .\.venv-evolution\Scripts\python.exe -m sayuri_core.evolution_healthcheck
 ```
+
+
+## Runtime Bridge v0.2
+
+Sayuri Core now has a provider-neutral chat runtime. The browser never receives
+the provider API key.
+
+Safe development default:
+
+```text
+SAYURI_LLM_PROVIDER=mock
+```
+
+OpenAI-compatible provider example:
+
+```text
+SAYURI_LLM_PROVIDER=openai-compatible
+SAYURI_LLM_BASE_URL=https://provider.example/v1
+SAYURI_LLM_MODEL=your-model-id
+SAYURI_LLM_API_KEY=stored-only-in-local-env
+```
+
+Remote provider endpoints must use HTTPS. Plain HTTP is accepted only for
+localhost/loopback development.
+
+The chat path is:
+
+```text
+screen context
+    ↓
+SQLite memory retrieval
+    ↓
+Cognitive Governor + public operation plan
+    ↓
+LLM Runtime Bridge
+    ↓
+Verifier
+    ↓
+Cognitive Timeline
+    ↓
+chat UI
+```
+
+New v0.2 API:
+
+- `GET /v1/runtime/status`
+- `POST /v1/context/screen`
+- `GET /v1/context/screen/{session_id}`
+- `GET /v1/memory/recall?q=...`
+- `GET /v1/skills`
+- `GET /v1/timeline`
+- `POST /v1/chat`
+
+### Screen context policy
+
+Current route/module/entity context is ephemeral. It is bounded in memory and is
+not automatically written as a verified fact or long-term memory.
+
+### MCP policy
+
+v0.2 includes a safe MCP catalog boundary only. Arbitrary MCP process/tool
+execution is deliberately disabled until a dedicated permission gateway,
+tool allow-list, audit record and confirmation policy are implemented.
+
+### Cognitive Timeline
+
+The timeline contains observable operations such as planning mode, runtime
+latency, verification status and chat delivery. Hidden chain-of-thought and
+private reasoning are never exposed.
