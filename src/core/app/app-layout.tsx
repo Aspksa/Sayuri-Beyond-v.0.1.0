@@ -4,6 +4,7 @@ import { MixLayout } from './layout/mix-layout'
 import { SideLayout } from './layout/side-layout'
 import { TopLayout } from './layout/top-layout'
 import { NavigationProgress } from './components/navigation-progress'
+import { SayuriCompanion } from './components/sayuri-companion'
 import { SettingDrawer } from './settings/setting-drawer'
 import { useApplySettings } from './hooks/use-apply-settings'
 
@@ -20,6 +21,7 @@ export function AppLayout() {
       {layoutMode === 'side' && <SideLayout />}
       {layoutMode === 'column' && <ColumnLayout />}
       <SettingDrawer />
+      <SayuriCompanion />
     </>
   )
 }
