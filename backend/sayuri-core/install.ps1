@@ -4,7 +4,7 @@ Set-StrictMode -Version Latest
 $Here = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $Here
 
-Write-Host "SAYURI Core: creating Python 3.12 environment..."
+Write-Host "SAYURI Core: creating lightweight Python 3.12 environment..."
 
 if (Get-Command py -ErrorAction SilentlyContinue) {
     & py -3.12 -m venv .venv
@@ -25,3 +25,4 @@ Write-Host "Running Sayuri Core health check..."
 
 Write-Host ""
 Write-Host "SAYURI Core installed successfully."
+Write-Host "For heavy EvoAgentX optimizers run: .\install-evolution.ps1"
