@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     enable_logic: bool = True
     enable_evolution: bool = True
     enable_learning: bool = True
+    enable_memrl: bool = True
 
 
 @lru_cache
