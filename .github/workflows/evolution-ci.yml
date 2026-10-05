@@ -8,6 +8,17 @@ on:
       - "backend/sayuri-core/install-evolution.ps1"
       - "backend/sayuri-core/src/sayuri_core/evolution_engine.py"
       - "backend/sayuri-core/src/sayuri_core/evolution_healthcheck.py"
+      - "backend/sayuri-core/src/sayuri_core/memrl_adapter.py"
+      - "backend/sayuri-core/src/sayuri_core/evolution_gate.py"
+      - ".github/workflows/evolution-ci.yml"
+  pull_request:
+    paths:
+      - "backend/sayuri-core/pyproject.toml"
+      - "backend/sayuri-core/install-evolution.ps1"
+      - "backend/sayuri-core/src/sayuri_core/evolution_engine.py"
+      - "backend/sayuri-core/src/sayuri_core/evolution_healthcheck.py"
+      - "backend/sayuri-core/src/sayuri_core/memrl_adapter.py"
+      - "backend/sayuri-core/src/sayuri_core/evolution_gate.py"
       - ".github/workflows/evolution-ci.yml"
   workflow_dispatch:
 
@@ -33,5 +44,5 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e ".[evolution]"
 
-      - name: Verify EvoAgentX optimizer imports
+      - name: Verify EvoAgentX optimizers and MemRL
         run: python -m sayuri_core.evolution_healthcheck
