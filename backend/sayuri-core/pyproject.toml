@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Cognitive backend for SAYURI BEYOND"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-  "evoagentx[optimizers,tools,benchmarks,viz]==0.1.4",
+  "evoagentx[optimizers,tools,benchmarks,viz,rag]==0.1.4",
   "hyperon==0.2.10",
   "fastapi>=0.115,<1",
   "uvicorn[standard]>=0.30,<1",
