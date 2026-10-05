@@ -1,7 +1,5 @@
 import json
 from importlib import import_module
-from importlib.metadata import PackageNotFoundError, version
-from importlib.util import find_spec
 from typing import Any
 
 
@@ -29,29 +27,11 @@ def probe() -> dict[str, dict[str, Any]]:
     return result
 
 
-def probe_memrl() -> dict[str, Any]:
-    installed = find_spec("memrl") is not None
-    installed_version = None
-    if installed:
-        try:
-            installed_version = version("memrl")
-        except PackageNotFoundError:
-            installed_version = "unknown"
-    return {
-        "available": installed,
-        "version": installed_version,
-        "pinned_revision": "c1b322ca43de36ddf64c6712f89d0095bfc35ce0",
-        "mode": "ready_for_provider_binding" if installed else "missing",
-    }
-
-
 def main() -> None:
     optimizers = probe()
-    memrl = probe_memrl()
     report = {
         "runtime": "evolution-worker",
         "optimizers": optimizers,
-        "memrl": memrl,
         "self_modifying_code": False,
     }
     print(json.dumps(report, ensure_ascii=False, indent=2))
@@ -63,8 +43,6 @@ def main() -> None:
         raise SystemExit(
             "Evolution Worker optimizer health check failed: " + ", ".join(missing)
         )
-    if not memrl["available"]:
-        raise SystemExit("Evolution Worker MemRL health check failed")
 
 
 if __name__ == "__main__":
