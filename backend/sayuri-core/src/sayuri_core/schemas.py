@@ -40,6 +40,28 @@ class StrategyCandidateRequest(BaseModel):
     safety_passed: bool = False
 
 
+class EvolutionProposalRequest(BaseModel):
+    strategy_key: str = Field(min_length=1, max_length=120)
+    base_description: str = Field(min_length=1, max_length=10_000)
+    lessons: list[str] = Field(default_factory=list)
+    variants: int = Field(default=4, ge=2, le=4)
+
+
+class EvolutionBenchmarkCandidate(BaseModel):
+    name: str = Field(min_length=1, max_length=120)
+    description: str = Field(min_length=1, max_length=10_000)
+    scores: ScoreVector
+    confidence: float = Field(ge=0, le=1)
+    regression_passed: bool = False
+    safety_passed: bool = False
+
+
+class EvolutionBenchmarkRequest(BaseModel):
+    strategy_key: str = Field(min_length=1, max_length=120)
+    baseline_score: float = Field(ge=0, le=1)
+    candidates: list[EvolutionBenchmarkCandidate] = Field(min_length=1, max_length=8)
+
+
 class FactCreateRequest(BaseModel):
     entity: str = Field(min_length=1, max_length=200)
     attribute: str = Field(min_length=1, max_length=200)
