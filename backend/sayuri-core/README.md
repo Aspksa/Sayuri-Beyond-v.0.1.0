@@ -4,19 +4,36 @@ Backend cognitive layer for **SAYURI BEYOND v0.1.0 — Awakening**.
 
 ## Architecture
 
-The normal Sayuri runtime stays lightweight:
+Sayuri now has three separated runtime layers so normal conversation stays fast and learning dependencies cannot destabilize the assistant.
+
+### 1. Sayuri Core — normal runtime
 
 - **EvoAgentX 0.1.4 base** — agent workflow primitives.
 - **OpenCog Hyperon 0.2.10 / MeTTa** — symbolic logic and knowledge reasoning.
 - **Sayuri Learning Layer** — evaluator, teacher, reflection, persistent experience and strategy governance.
-- **MemRL Adapter** — records reward-labelled episodic experience in shadow mode without requiring MemRL in the normal runtime.
+- **MemRL Adapter** — records reward-labelled episodic experience in shadow mode without importing MemRL.
+- **Evolution Gate** — decides whether verified experience reinforces the current strategy or becomes an improvement candidate.
 - **Evolution Lab** — controlled strategy proposal and benchmark flow.
 
-Heavy evolution dependencies run in a separate environment created by `install-evolution.ps1`:
+### 2. Evolution Worker — heavy EvoAgentX optimization
 
-- EvoAgentX `[all]` optimizer stack;
-- TextGrad, AFlow, MIPRO and EvoPrompt;
-- MemRL 0.1.0 pinned to a reviewed Git revision.
+Installed in `.venv-evolution`:
+
+- EvoAgentX `[all]`;
+- TextGrad;
+- AFlow;
+- MIPRO;
+- EvoPrompt GA / DE.
+
+### 3. MemRL Worker — episodic reinforcement
+
+Installed separately in `.venv-memrl`:
+
+- MemRL 0.1.0;
+- MemRL MemoryService;
+- its MemoryOS/runtime dependencies.
+
+The two heavy workers are intentionally separate. Their current transitive OpenAI SDK requirements are incompatible in one Python environment, so SAYURI does not force or bypass dependency resolution.
 
 ## Cognitive loop
 
@@ -52,18 +69,19 @@ Sayuri Evolution Gate
 
 ## MemRL modes
 
-The normal core does **not** import or require the MemRL package.
+The normal core does **not** require the MemRL package.
 
-- **Shadow mode**: every completed task can already be stored as a reward-labelled episode with evidence, confidence, errors, lessons and retrieved memory IDs.
-- **Evolution Worker mode**: MemRL is installed in `.venv-evolution` and is ready for provider binding. Once the production LLM and embedding providers are wired, the adapter can forward rewards to MemRL's `MemoryService.update_values()`.
+- **Shadow mode** — every completed task can be stored immediately as a reward-labelled episode with evidence, confidence, errors, lessons and retrieved memory IDs.
+- **MemRL Worker mode** — MemRL runs in its own environment and can later receive those episodes through Sayuri's adapter/service boundary.
+- **Active reinforcement** — after the production LLM and embedding providers are connected, retrieved memory IDs can receive reward/Q-value updates through MemRL's `MemoryService.update_values()`.
 
-This keeps normal chat startup fast while preserving learning signals for later reinforcement.
+No model weights are changed by this runtime learning layer.
 
 ## Evolution safety
 
 Self-modifying source code remains disabled.
 
-A strategy is not trusted just because a model proposed it. Promotion remains behind explicit regression, safety, confidence and quality-improvement gates. The MemRL layer never promotes strategies by itself.
+A strategy is never trusted merely because a model proposed it. Promotion remains behind explicit regression, safety, confidence and quality-improvement gates. MemRL cannot promote a strategy by itself.
 
 Every promoted strategy can be rolled back atomically to the previous verified version.
 
@@ -96,13 +114,19 @@ Normal Sayuri runtime:
 ./run.ps1
 ```
 
-Isolated Evolution Worker with heavy EvoAgentX optimizers + MemRL:
+Heavy EvoAgentX Evolution Worker:
 
 ```powershell
 ./install-evolution.ps1
 ```
 
-The worker uses its own `.venv-evolution` environment so the normal assistant stays light.
+MemRL reinforcement worker:
+
+```powershell
+./install-memrl.ps1
+```
+
+The workers use separate virtual environments so the normal assistant stays lightweight and dependency-safe.
 
 ## Main API
 
