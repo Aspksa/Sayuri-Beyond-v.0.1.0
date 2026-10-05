@@ -2,6 +2,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query
 
+from .cognitive import CognitiveCore
 from .config import get_settings
 from .evolution_engine import EvolutionEngine
 from .evolution_lab import EvolutionLab
@@ -9,6 +10,9 @@ from .knowledge import KnowledgeStore
 from .learning import DevelopmentMetrics, LearningEngine, StrategyLibrary
 from .logic_engine import LogicEngine
 from .schemas import (
+    CognitiveCompleteRequest,
+    CognitivePrepareRequest,
+    CognitiveVerifyRequest,
     EvolutionBenchmarkRequest,
     EvolutionProposalRequest,
     FactCreateRequest,
@@ -36,6 +40,7 @@ strategies = StrategyLibrary(store)
 knowledge = KnowledgeStore(store)
 development = DevelopmentMetrics(store)
 evolution_lab = EvolutionLab(store, strategies)
+cognitive = CognitiveCore(store)
 
 
 @app.get("/health")
@@ -56,6 +61,44 @@ def health() -> dict:
             "teacher": "teacher_v2",
             "self_modifying_code": False,
         },
+        "cognitive": {
+            "available": True,
+            "components": cognitive.status()["components"],
+            "working_memory_persistent": False,
+            "long_term_events_persistent": True,
+        },
+    }
+
+
+@app.get("/v1/cognitive/status")
+def cognitive_status(task_id: str | None = Query(default=None)) -> dict:
+    return cognitive.status(task_id)
+
+
+@app.post("/v1/cognitive/prepare")
+def cognitive_prepare(request: CognitivePrepareRequest) -> dict:
+    return cognitive.prepare(request)
+
+
+@app.post("/v1/cognitive/verify")
+def cognitive_verify(request: CognitiveVerifyRequest) -> dict:
+    return cognitive.verify(request)
+
+
+@app.post("/v1/cognitive/complete")
+def cognitive_complete(request: CognitiveCompleteRequest) -> dict:
+    if not settings.enable_learning:
+        raise HTTPException(status_code=503, detail="learning engine is disabled")
+    learning_result = learning.complete_task(request)
+    cognitive_result = cognitive.finalize(
+        request.task_id,
+        learning_event_id=learning_result["experience"]["id"],
+        clear_working_memory=request.clear_working_memory,
+    )
+    return {
+        "cognitive": cognitive_result,
+        "learning": learning_result,
+        "development": development.snapshot(),
     }
 
 

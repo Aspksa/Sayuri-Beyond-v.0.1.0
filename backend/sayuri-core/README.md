@@ -4,7 +4,7 @@ Backend cognitive layer for **SAYURI BEYOND v0.1.0 — Awakening**.
 
 ## Runtime split
 
-Sayuri now uses two Python environments on purpose.
+Sayuri uses two Python environments on purpose.
 
 ### 1. Lightweight Core — normal daily runtime
 
@@ -13,6 +13,8 @@ Contains:
 - EvoAgentX base 0.1.4;
 - Hyperon / MeTTa 0.2.10;
 - FastAPI;
+- Sayuri cognitive governor, planner and verifier;
+- bounded working memory plus persistent cognitive events;
 - Sayuri memory, learning, Teacher v2, knowledge and Evolution Lab governance.
 
 Install:
@@ -48,7 +50,87 @@ Environment:
 
 This separation prevents heavy RAG/browser/ML dependencies from slowing ordinary Sayuri startup.
 
-## Cognitive loop
+## Cognitive Core v0.1
+
+The normal task lifecycle is now explicit and observable:
+
+```text
+Task
+  ↓
+Agent State: planning
+  ↓
+Cognitive Governor
+  ├── fast_chain
+  ├── deliberate_chain
+  ├── tree
+  └── guarded
+  ↓
+Planner
+  ↓
+Working Memory
+  ↓
+Tools / reasoning runtime
+  ↓
+Verifier
+  ├── evidence
+  ├── contradictions
+  ├── tool failures
+  ├── safety
+  └── confidence
+  ↓
+Learning Engine
+  ↓
+Experience + Reflection + Teacher lessons
+  ↓
+Development Metrics
+```
+
+### Memory split
+
+Working memory is intentionally short-lived and bounded:
+
+- maximum 64 items per active task;
+- maximum 128 active task buckets;
+- cleared after completion by default;
+- never treated as verified long-term knowledge.
+
+Long-term records remain in SQLite:
+
+- cognitive events;
+- evaluations;
+- reflections;
+- experience;
+- strategies;
+- verified facts;
+- contradictions;
+- hypotheses.
+
+This prevents temporary reasoning context from silently becoming permanent knowledge.
+
+### Cognitive Governor
+
+The governor selects reasoning depth from measurable task signals:
+
+- low complexity + sufficient confidence → `fast_chain`;
+- moderate complexity or tool use → `deliberate_chain`;
+- contradictions or low confidence → `tree`;
+- high-risk action → `guarded` and human confirmation required.
+
+The governor does not expose hidden chain-of-thought. It returns an operational mode, reasons, verification requirements and allowed number of alternatives.
+
+### Verifier
+
+A result is blocked when any hard gate fails:
+
+- safety gate;
+- unresolved contradiction;
+- tool failure;
+- unchecked critical claim;
+- confidence below the acceptance threshold.
+
+Verification events are persisted for diagnostics and the future Cognitive Timeline UI.
+
+## Learning loop
 
 ```text
 Task result
@@ -111,14 +193,25 @@ Hypotheses are separate from facts and use explicit states:
 
 ## Main API
 
-- `GET /health`
-- `POST /v1/logic/evaluate`
+Cognitive lifecycle:
+
+- `GET /v1/cognitive/status`
+- `POST /v1/cognitive/prepare`
+- `POST /v1/cognitive/verify`
+- `POST /v1/cognitive/complete`
+
+Learning and evolution:
+
+- `POST /v1/learning/complete-task`
+- `GET /v1/memory/experiences`
 - `GET /v1/evolution/status`
 - `POST /v1/evolution/propose`
 - `POST /v1/evolution/benchmark`
 - `GET /v1/evolution/experiments`
-- `POST /v1/learning/complete-task`
-- `GET /v1/memory/experiences`
+
+Logic, strategy and knowledge:
+
+- `POST /v1/logic/evaluate`
 - `POST /v1/strategies/candidates`
 - `GET /v1/strategies`
 - `POST /v1/knowledge/facts`

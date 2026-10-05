@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -28,6 +28,35 @@ class LearningCycleRequest(BaseModel):
     observed_lessons: list[str] = Field(default_factory=list)
     evidence: list[str] = Field(default_factory=list)
     confidence: float = Field(default=0.5, ge=0, le=1)
+
+
+class CognitivePrepareRequest(BaseModel):
+    task_id: str | None = Field(default=None, min_length=1, max_length=120)
+    task_type: str = Field(min_length=1, max_length=120)
+    goal: str = Field(min_length=1, max_length=20_000)
+    complexity: float = Field(default=0.3, ge=0, le=1)
+    confidence: float = Field(default=0.8, ge=0, le=1)
+    contradiction_count: int = Field(default=0, ge=0, le=10_000)
+    tool_required: bool = False
+    memory_required: bool = True
+    prior_failures: int = Field(default=0, ge=0, le=10_000)
+    risk: Literal["low", "medium", "high"] = "low"
+    context: dict[str, Any] = Field(default_factory=dict)
+
+
+class CognitiveVerifyRequest(BaseModel):
+    task_id: str = Field(min_length=1, max_length=120)
+    evidence: list[str] = Field(default_factory=list)
+    unresolved_contradictions: int = Field(default=0, ge=0, le=10_000)
+    tool_failures: int = Field(default=0, ge=0, le=10_000)
+    confidence: float = Field(ge=0, le=1)
+    critical_claims_checked: bool = True
+    safety_passed: bool = True
+
+
+class CognitiveCompleteRequest(LearningCycleRequest):
+    task_id: str = Field(min_length=1, max_length=120)
+    clear_working_memory: bool = True
 
 
 class StrategyCandidateRequest(BaseModel):
