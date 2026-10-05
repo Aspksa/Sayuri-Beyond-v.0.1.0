@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sqlite3
 import threading
 import uuid
@@ -270,14 +271,17 @@ class SQLiteStore:
 
     @staticmethod
     def _search_tokens(query: str) -> list[str]:
-        return [
-            token
-            for token in {
-                part.strip().casefold()
-                for part in query.replace("\n", " ").split(" ")
+        return sorted(
+            {
+                token
+                for token in re.findall(
+                    r"[^\\W_]+(?:-[^\\W_]+)*",
+                    query.casefold(),
+                    flags=re.UNICODE,
+                )
+                if len(token) >= 2
             }
-            if len(token) >= 2
-        ]
+        )
 
     def search_facts(self, query: str, limit: int = 8) -> list[dict[str, Any]]:
         tokens = self._search_tokens(query)
