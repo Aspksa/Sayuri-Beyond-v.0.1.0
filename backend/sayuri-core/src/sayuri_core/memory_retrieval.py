@@ -14,11 +14,7 @@ class MemoryRetriever:
 
     @staticmethod
     def _tokens(query: str) -> set[str]:
-        return {
-            token.strip().casefold()
-            for token in query.replace("\n", " ").split(" ")
-            if len(token.strip()) >= 2
-        }
+        return set(SQLiteStore._search_tokens(query))
 
     @staticmethod
     def _clip(value: Any, limit: int = 500) -> str:
